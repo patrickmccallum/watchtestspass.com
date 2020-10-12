@@ -73,7 +73,7 @@ yarn-error.log*
                     // The golden goose
                     if (selection === "watchtestspass.com") {
                         return {
-                            output: OutputFactory.makeTextOutput("TODO"),
+                            output: OutputFactory.makeTextOutput("Just type jest"),
                         }
                     }
 
