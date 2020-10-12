@@ -1,26 +1,135 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { ReactTerminal, ReactOutputRenderers } from "react-terminal-component";
+import {
+  EmulatorState,
+  FileSystem,
+  CommandMapping,
+  defaultCommandMapping,
+  OutputFactory,
+  Outputs,
+} from "javascript-terminal";
+import { CUSTOM_TYPE } from "./constants";
+import { JestComponent } from "./JestComponent";
 
-function App() {
+export const App = () => {
+  const [isRunning, setRunning] = useState(false);
+
+  const customState = EmulatorState.create({
+    fs: FileSystem.create({
+      "/home": {},
+      "/home/CREDITS": { content: "https://patsnacks.com" },
+      "/home/projects/": {},
+      "/home/projects/your-app": {},
+      "/home/projects/your-app/.gitignore": {
+        content: `
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+      `,
+      },
+    }),
+    commandMapping: CommandMapping.create({
+      ...defaultCommandMapping,
+      print: {
+        function: (state: any, opts: any) => {
+          const input = opts.join(" ");
+
+          return {
+            output: OutputFactory.makeTextOutput(input),
+          };
+        },
+        optDef: {},
+      },
+      man: {
+        function: (state: any, opts: any) => {
+          const selection = opts[0];
+          // No selection made
+          if (!selection) {
+            return {
+              output: OutputFactory.makeTextOutput(
+                "What manual page do you want?"
+              ),
+            };
+          }
+
+          // The golden goose
+          if (selection === "watchtestspass.com") {
+            return {
+              output: OutputFactory.makeTextOutput("TODO"),
+            };
+          }
+
+          // Fallback
+          return {
+            output: OutputFactory.makeTextOutput(
+              `No manual entry for ${selection}`
+            ),
+          };
+        },
+        optDef: {},
+      },
+      jest: {
+        function: (state: any, opts: any) => {
+          const input = opts.join(" ");
+
+          return {
+            output: new OutputFactory.OutputRecord({
+              type: CUSTOM_TYPE.JEST,
+              content: {},
+            }),
+          };
+        },
+        optDef: {},
+      },
+    }),
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <header>
+      <main>
+        <ReactTerminal
+          inputStr="man watchtestspass.com"
+          emulatorState={customState}
+          outputRenderers={{
+            ...ReactOutputRenderers,
+            [CUSTOM_TYPE.JEST]: JestComponent,
+          }}
+          theme={{
+            background: '#141313',
+            promptSymbolColor: '#6effe6',
+            commandColor: '#fcfcfc',
+            outputColor: '#fcfcfc',
+            errorOutputColor: '#ff89bd',
+            fontSize: '1.1rem',
+            spacing: '1%',
+            fontFamily: 'monospace',
+            width: 'calc(100vw - 50px)',
+            height: 'calc(100vh - 50px)'
+          }}
+        />
+      </main>
+    </header>
   );
-}
-
-export default App;
+};
