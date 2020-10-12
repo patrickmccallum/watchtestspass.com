@@ -57,7 +57,6 @@ const generateTest = (
 }
 
 export const JestComponent = () => {
-    const [isRunning, setRunning] = useState(true)
     const [runningTests, setRunningTests] = useState<TestsCollection>({})
     const [finishedTests, setFinishedTests] = useState<
         Array<JestStatusLineProps>
