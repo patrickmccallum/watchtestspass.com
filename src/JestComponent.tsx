@@ -107,7 +107,6 @@ export const JestComponent = () => {
             setNumberPasses(getNumStatusLines("passesContainer"));
             setNumberRuns(getNumStatusLines("runsContainer"));
         }
-        console.log(numberPasses);
         window.addEventListener("resize", handleResize);    //Attaching event listener to adjust how many lines fit inside the container on resizing the window
         return () => window.removeEventListener("resize", handleResize);
     },[numberPasses,numberRuns]);
