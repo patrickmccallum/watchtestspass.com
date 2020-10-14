@@ -66,7 +66,7 @@ const JEST_TEST_LINE_HEIGHT = 17; // This is the height of JestTestLine.. I have
 const getNumStatusLines = function(idOfContainer: string){ // This helps us calculate how many JestTestLines can come inside the container with given ID( without cutting)
     let container = document.getElementById(idOfContainer);
     let containerHeight = container?.clientHeight;
-    let numStatusLines = containerHeight ? Math.floor(containerHeight/JEST_TEST_LINE_HEIGHT) : 50; // 50 is just any nuumber
+    let numStatusLines = containerHeight ? Math.floor(containerHeight/JEST_TEST_LINE_HEIGHT) : 20; // 20 is just any nuumber
     return numStatusLines;
 }
 
@@ -108,11 +108,13 @@ export const JestComponent = () => {
             setNumberPasses(getNumStatusLines("passesContainer"));
             setNumberRuns(getNumStatusLines("runsContainer"));
         }
+        console.log(numberPasses);
         window.addEventListener("resize", handleResize);    //Attaching event listener to adjust how many lines fit inside the container on resizing the window
         return () => window.removeEventListener("resize", handleResize);
-    },[]);
-
+    },[numberPasses,numberRuns]);
+    
     return (
+        
         <JestContainer >
             <Passes id="passesContainer">
                 {finishedTests.slice(0,numberPasses).map((testObject) => { //Sliced the array to show only first few entries, as rest would not be displayed because of overflow
