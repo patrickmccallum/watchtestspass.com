@@ -6,7 +6,7 @@ import { JEST_STATUS, JestTestLine, JestStatusLineProps } from "./JestTestLine"
 import { BEGINNINGS, ENDINGS, FILE_TYPES } from "./words"
 
 const JestContainer = styled.div`
-    height: calc(80vh - 50px);
+    height: calc(100vh - 50px);
     display: flex;
     flex-direction: column;
 `
@@ -14,18 +14,17 @@ const JestContainer = styled.div`
 const Passes = styled.div`
     flex: 1 20%;
     overflow: hidden;
-    margin-bottom : 5px;
+    margin-bottom : 15px;
 `
 
 const Runs = styled.div`
     flex: 1 60%;
     overflow: hidden;
-    margin-bottom : 5px;
+    margin-bottom : 15px;
 `
 
 const Stats = styled.div`
     flex: 1;
-    
 `
 
 interface TestsCollection {
@@ -66,7 +65,7 @@ const JEST_TEST_LINE_HEIGHT = 17; // This is the height of JestTestLine.. I have
 const getNumStatusLines = function(idOfContainer: string){ // This helps us calculate how many JestTestLines can come inside the container with given ID( without cutting)
     let container = document.getElementById(idOfContainer);
     let containerHeight = container?.clientHeight;
-    let numStatusLines = containerHeight ? Math.floor(containerHeight/JEST_TEST_LINE_HEIGHT) : 20; // 20 is just any nuumber
+    let numStatusLines = containerHeight ? Math.floor(containerHeight/JEST_TEST_LINE_HEIGHT) : 25; // 20 is just any nuumber
     return numStatusLines;
 }
 
