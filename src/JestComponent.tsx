@@ -6,7 +6,7 @@ import { JEST_STATUS, JestTestLine, JestStatusLineProps } from "./JestTestLine"
 import { BEGINNINGS, ENDINGS, FILE_TYPES } from "./words"
 
 const JestContainer = styled.div`
-    height: calc(100vh - 50px);
+    height: calc(80vh - 50px);
     display: flex;
     flex-direction: column;
 `
@@ -14,20 +14,25 @@ const JestContainer = styled.div`
 const Passes = styled.div`
     flex: 1 20%;
     overflow: hidden;
-    margin-bottom: 10px;
+    margin-bottom : 5px;
 `
 
 const Runs = styled.div`
-    flex: 1 50%;
+    flex: 1 60%;
+    overflow: hidden;
+    margin-bottom : 5px;
 `
 
 const Stats = styled.div`
     flex: 1;
+    
 `
 
 interface TestsCollection {
     [testId: number]: JestStatusLineProps & { id: number }
 }
+
+
 
 const generateTest = (
     id: number
@@ -54,6 +59,15 @@ const generateTest = (
             time: Math.random() * 23000,
         },
     }
+}
+
+const JEST_TEST_LINE_HEIGHT = 17; // This is the height of JestTestLine.. I have set it to 17px in the JestTestLine.tsx as well
+
+const getNumStatusLines = function(idOfContainer: string){ // This helps us calculate how many JestTestLines can come inside the container with given ID( without cutting)
+    let container = document.getElementById(idOfContainer);
+    let containerHeight = container?.clientHeight;
+    let numStatusLines = containerHeight ? Math.floor(containerHeight/JEST_TEST_LINE_HEIGHT) : 50; // 50 is just any nuumber
+    return numStatusLines;
 }
 
 export const JestComponent = () => {
@@ -86,12 +100,24 @@ export const JestComponent = () => {
         finishedTestsRef.current = finishedTests
     }, [finishedTests])
 
+    let [numberPasses, setNumberPasses] = useState(getNumStatusLines("passesContainer")); //Number of pass lines that can fit inside the parent container
+    let [numberRuns, setNumberRuns] = useState(getNumStatusLines("runsContainer")); // Number of run lines that can fit inside the parent container
+
+    useEffect(() => {
+        function handleResize(){
+            setNumberPasses(getNumStatusLines("passesContainer"));
+            setNumberRuns(getNumStatusLines("runsContainer"));
+        }
+        window.addEventListener("resize", handleResize);    //Attaching event listener to adjust how many lines fit inside the container on resizing the window
+        return () => window.removeEventListener("resize", handleResize);
+    },[]);
+
     return (
-        <JestContainer>
-            <Passes>
-                {finishedTests.map((testObject) => {
+        <JestContainer >
+            <Passes id="passesContainer">
+                {finishedTests.slice(0,numberPasses).map((testObject) => { //Sliced the array to show only first few entries, as rest would not be displayed because of overflow
                     return (
-                        <JestTestLine
+                        <JestTestLine 
                             status={JEST_STATUS.PASS}
                             filePath={`${testObject.filePath}`}
                             fileName={`${testObject.fileName}`}
@@ -101,8 +127,8 @@ export const JestComponent = () => {
                     )
                 })}
             </Passes>
-            <Runs>
-                {Object.values(runningTests).map((testObject) => {
+            <Runs id="runsContainer">
+                {Object.values(runningTests).slice(0,numberRuns).map((testObject) => {
                     return (
                         <JestTestLine
                             key={testObject.id}

@@ -63,6 +63,8 @@ export const JestTestLine = ({
                     background: statusColor,
                     color: "#000",
                     fontWeight: 600,
+                    padding: "0 0",
+                    height : "17px"
                 }}
             >
                 {status}
